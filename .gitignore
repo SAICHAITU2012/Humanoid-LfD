@@ -37,3 +37,4 @@ data/public/
 !outputs/replay_public_episode.mp4
 !outputs/replay_public_trace.csv
 !outputs/chunked_baseline_rollout.mp4
+MUJOCO_LOG.TXT
