@@ -110,3 +110,12 @@ Teacher-forced accuracy is excellent; closed-loop execution diverges because a p
 The GPU asks in §5 stand, plus one from the new evidence:
 
 5. **Closed-loop correction at scale on the video→finger pipeline** — DAgger/interaction-trained recovery is the measured fix for the 0.085→0.505 rad gap (§8.2); doing it on the real 238-episode distribution with temporal policies is the difference between a reproducing hand and an executing one.
+
+---
+
+## 9. Interactive viewer + quasi-static walking gait (scripted, not learned)
+
+- **Live manual control:** `src/view_g1_web.py` (mjpython MuJoCo window) + `src/g1_control_server.py` (browser page at `127.0.0.1:8765`): 14 right-arm/hand sliders, Walk/Halt/Reset buttons, walk-speed slider. Commands travel via `outputs/g1_control_state.json`.
+- **Walking gait (`src/gait.py`, `walk_targets`):** quasi-static, open-loop phase generator + pelvis-roll/pitch feedback (stance-hip-only, contact-aware) + auto-halt on fall. Tuned headlessly by `src/tune_walk.py` sweeps (~150 sim runs).
+- **Measured result (best sweep config, 12 s trials):** walks forward **+0.55 m over ~4 s** (several genuine steps: feet lift via a body-dip unloading trick, weight shifts over the stance foot, waist pitched 0.08 rad forward), then stumbles. Stability came from fixing three measured bugs: knee-phase vs swing direction (1:1 FK ankle-leveling rule), a backwards pitch-feedback sign (push-recovery test), and locked swing knees under ground friction (dip fix).
+- **Honest limits:** this is a scripted gait, not a learned locomotion policy — it walks a few steps and falls; robust G1 walking needs an RL policy (e.g. unitree_rl_gym-style training on GPU), which remains a GPU-credit ask, consistent with §5/§8.4.

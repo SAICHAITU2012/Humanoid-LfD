@@ -26,10 +26,15 @@ button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:9px 14px
 button.alt{background:#333a45}</style></head><body>
 <h1>Unitree G1 — live joint controls</h1>
 <div class="btns">
+<button onclick="cmd('walk')">Walk</button>
+<button onclick="cmd('halt')" class="alt">Halt</button>
 <button onclick="cmd('open_hand')">Open hand</button>
 <button onclick="cmd('close_hand')">Close hand</button>
 <button onclick="cmd('reset')" class="alt">Reset stand pose</button>
 </div>
+<div class="row"><label><span>walk_speed</span><span id="v_walk_speed">1.00</span></label>
+<input type="range" min="0.8" max="1.0" step="0.05" value="1.0"
+  oninput="document.getElementById('v_walk_speed').textContent=(+this.value).toFixed(2);fetch('/set?j=walk_speed&v='+this.value)"></div>
 <h2>Right arm</h2><div id="arm"></div>
 <h2>Right hand</h2><div id="hand"></div>
 <script>
@@ -85,6 +90,12 @@ class ControlState:
         write_json(STATE_PATH, self.state)
 
     def set_joint(self, name: str, value: float) -> bool:
+        if name == "walk_speed":
+            with self.lock:
+                self.state["walk_speed"] = min(1.0, max(0.8, value))
+                self.state["seq"] += 1
+                self.save()
+            return True
         limits = {a["name"]: (a["lo"], a["hi"]) for a in self.spec["actuators"]}
         if name not in limits:
             return False
@@ -99,6 +110,11 @@ class ControlState:
         with self.lock:
             if name == "reset":
                 self.state["reset"] = True
+                self.state["mode"] = "stand"
+            elif name == "walk":
+                self.state["mode"] = "walk"
+            elif name == "halt":
+                self.state["mode"] = "stand"
             elif name == "open_hand":
                 for joint in HAND_CLOSED:
                     self.state["targets"][joint] = 0.0
