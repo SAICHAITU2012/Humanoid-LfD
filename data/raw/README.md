@@ -1,0 +1,1 @@
+Place only your own recorded demonstration video here. Keep the original file and note how you recorded it (camera, angle, task, object, date). Raw videos are ignored by Git by default; include a representative sample in the public submission only after checking that it contains no private information.

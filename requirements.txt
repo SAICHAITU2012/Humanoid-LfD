@@ -1,0 +1,7 @@
+numpy==1.26.4
+mujoco==3.17.0
+mediapipe==0.10.35
+opencv-contrib-python==4.11.0.86
+scipy==1.17.1
+torch==2.15.0
+
