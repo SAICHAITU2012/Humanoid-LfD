@@ -84,46 +84,56 @@ class ControlState:
     def __init__(self) -> None:
         self.lock = threading.Lock()
         self.spec = read_json(SPEC_PATH, {"actuators": []})
-        self.state = read_json(STATE_PATH, {"targets": {}, "reset": False, "seq": 0})
 
-    def save(self) -> None:
-        write_json(STATE_PATH, self.state)
+    def save(self, state) -> None:
+        write_json(STATE_PATH, state)
+
+    def load(self):
+        # Always re-read before mutating: a startup snapshot goes stale when
+        # the viewer rewrites the file (fresh reset flags, telemetry, ...).
+        return read_json(STATE_PATH, {"targets": {}, "reset": False, "mode": "stand",
+                                      "walk_speed": 1.0, "seq": 0})
 
     def set_joint(self, name: str, value: float) -> bool:
         if name == "walk_speed":
             with self.lock:
-                self.state["walk_speed"] = min(1.0, max(0.8, value))
-                self.state["seq"] += 1
-                self.save()
+                state = self.load()
+                state["walk_speed"] = min(1.0, max(0.8, value))
+                state["seq"] += 1
+                self.save(state)
             return True
         limits = {a["name"]: (a["lo"], a["hi"]) for a in self.spec["actuators"]}
         if name not in limits:
             return False
         lo, hi = limits[name]
         with self.lock:
-            self.state["targets"][name] = min(hi, max(lo, value))
-            self.state["seq"] += 1
-            self.save()
+            state = self.load()
+            state.setdefault("targets", {})[name] = min(hi, max(lo, value))
+            state["seq"] += 1
+            self.save(state)
         return True
 
     def command(self, name: str) -> bool:
         with self.lock:
+            state = self.load()
             if name == "reset":
-                self.state["reset"] = True
-                self.state["mode"] = "stand"
+                state["reset"] = True
+                state["mode"] = "stand"
             elif name == "walk":
-                self.state["mode"] = "walk"
+                state["mode"] = "walk"
+                state["reset"] = False
             elif name == "halt":
-                self.state["mode"] = "stand"
+                state["mode"] = "stand"
+                state["reset"] = False
             elif name == "open_hand":
                 for joint in HAND_CLOSED:
-                    self.state["targets"][joint] = 0.0
+                    state.setdefault("targets", {})[joint] = 0.0
             elif name == "close_hand":
-                self.state["targets"].update(HAND_CLOSED)
+                state.setdefault("targets", {}).update(HAND_CLOSED)
             else:
                 return False
-            self.state["seq"] += 1
-            self.save()
+            state["seq"] += 1
+            self.save(state)
         return True
 
 
@@ -165,7 +175,7 @@ def main() -> None:
                 self._send(b"ok" if ok else b"unknown command", "text/plain")
             elif parsed.path == "/sync":
                 with control.lock:
-                    body = json.dumps(control.state["targets"]).encode()
+                    body = json.dumps(control.load().get("targets", {})).encode()
                 self._send(body, "application/json")
             else:
                 self.send_error(404)

@@ -40,6 +40,15 @@ HALT_S = 0.6     # walk targets -> stand
 FALL_Z = 0.45    # auto-halt when the pelvis drops this low
 
 
+def write_state(payload: dict) -> None:
+    """Atomic state-file write with a per-process tmp name: the server uses
+    the same .tmp path, and a shared tmp would let one side publish the
+    other's stale content."""
+    tmp = STATE_PATH.with_suffix(f".tmp{os.getpid()}")
+    tmp.write_text(json.dumps(payload), encoding="utf-8")
+    os.replace(tmp, STATE_PATH)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="G1 viewer controlled by src/g1_control_server.py via outputs/g1_control_state.json."
@@ -73,13 +82,13 @@ def main() -> None:
         actuators.append({"name": name, "lo": float(lo), "hi": float(hi),
                           "value": float(data.ctrl[aid]), "hand": name in HAND_JOINTS})
     SPEC_PATH.write_text(json.dumps({"actuators": actuators}), encoding="utf-8")
-    STATE_PATH.write_text(json.dumps({
+    write_state({
         "targets": {a["name"]: a["value"] for a in actuators},
         "reset": False,
         "mode": "stand",
         "walk_speed": 1.0,
         "seq": 0,
-    }), encoding="utf-8")
+    })
 
     walk_aids = {n: mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_ACTUATOR, n) for n in WALK_JOINTS}
     pelvis = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
@@ -108,6 +117,10 @@ def main() -> None:
     def stand_pose() -> dict[str, float]:
         return {n: 0.0 for n in WALK_JOINTS}
 
+    import sys
+    def debug(msg: str) -> None:
+        print(f"[{data.time:.2f}] {msg}", file=sys.stderr, flush=True)
+
     # Interactive viewer; on macOS launch this script with .venv/bin/mjpython.
     with mujoco.viewer.launch_passive(model, data) as viewer:
         viewer.cam.lookat[:] = [0.0, 0.0, 0.80]
@@ -125,6 +138,8 @@ def main() -> None:
         halt_t0 = 0.0
         bal = {"pr": 0.0, "pp": 0.0, "rr": 0.0, "rp": 0.0}
         speed = 1.0
+        telemetry_t = 0.0
+        telemetry_n = 0
         while viewer.is_running():
             try:
                 mtime = STATE_PATH.stat().st_mtime
@@ -132,27 +147,41 @@ def main() -> None:
                 mtime = None
             if mtime != last_mtime:
                 last_mtime = mtime
-                command = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+                try:
+                    command = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+                except (FileNotFoundError, json.JSONDecodeError) as e:
+                    debug(f"state read failed: {e}")
+                    command = {}
                 speed = max(0.8, min(1.0, float(command.get("walk_speed", 1.0))))
                 if command.get("reset"):
+                    debug(f"RESET cmd seq={command.get('seq')}")
                     mujoco.mj_resetDataKeyframe(model, data, stand)
                     hold_stand()
+                    mujoco.mj_forward(model, data)
+                    telemetry_t = 0.0
                     targets = {a["name"]: float(data.ctrl[name2aid[a["name"]]]) for a in actuators}
                     walk_phase = "stand"
                     # Publish the reset pose back so the browser sliders follow.
-                    STATE_PATH.write_text(json.dumps({"targets": targets, "reset": False,
-                                                      "mode": "stand", "walk_speed": speed,
-                                                      "seq": command.get("seq", 0) + 1}), encoding="utf-8")
+                    payload = dict(command)
+                    payload.update({"targets": targets, "reset": False,
+                                    "mode": "stand", "walk_speed": speed,
+                                    "seq": command.get("seq", 0) + 1})
+                    write_state(payload)
                     last_mtime = STATE_PATH.stat().st_mtime
                 else:
                     targets = {name: float(value) for name, value in command.get("targets", targets).items()}
                     mode = command.get("mode", "stand")
                     if mode == "walk" and walk_phase != "walk":
+                        debug(f"WALK cmd seq={command.get('seq')} z={float(data.xpos[pelvis][2]):.3f}")
                         if float(data.xpos[pelvis][2]) < 0.55 or not np.isfinite(data.qpos).all():
                             # Fallen: stand the robot back up before walking.
                             mujoco.mj_resetDataKeyframe(model, data, stand)
                             hold_stand()
                             targets = {a["name"]: float(data.ctrl[name2aid[a["name"]]]) for a in actuators}
+                            # Reset zeroes data.xpos; recompute so the fall
+                            # check below doesn't read z=0 and trip instantly.
+                            mujoco.mj_forward(model, data)
+                            telemetry_t = 0.0
                         walk_phase = "walk"
                         walk_t0 = data.time
                         bal = {"pr": 0.0, "pp": 0.0, "rr": 0.0, "rp": 0.0}
@@ -193,11 +222,12 @@ def main() -> None:
                     for n, a in walk_aids.items():
                         data.ctrl[a] = leg_targets.get(n, crouch[n])
                 if float(data.xpos[pelvis][2]) < FALL_Z or not np.isfinite(data.qpos).all():
+                    debug(f"FALL at sim_t={data.time - walk_t0:.2f} z={float(data.xpos[pelvis][2]):.3f}")
                     walk_phase = "stand"  # stumbled: stop commanding the legs
                     try:
                         command = json.loads(STATE_PATH.read_text(encoding="utf-8"))
                         command["mode"] = "stand"
-                        STATE_PATH.write_text(json.dumps(command), encoding="utf-8")
+                        write_state(command)
                         last_mtime = STATE_PATH.stat().st_mtime
                     except (FileNotFoundError, json.JSONDecodeError):
                         pass
@@ -212,6 +242,21 @@ def main() -> None:
             for name, value in targets.items():
                 data.ctrl[name2aid[name]] = value
             mujoco.mj_step(model, data)
+            # Lightweight telemetry: pelvis height + phase, sampled ~4 Hz wall.
+            if data.time - telemetry_t > 0.5:
+                telemetry_t = data.time
+                try:
+                    command = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+                    command["telemetry"] = {"z": round(float(data.xpos[pelvis][2]), 3),
+                                            "phase": walk_phase,
+                                            "seq": command.get("seq"),
+                                            "file_mode": command.get("mode"),
+                                            "n": telemetry_n,
+                                            "sim_t": round(float(data.time - walk_t0), 2) if walk_phase == "walk" else 0.0}
+                    telemetry_n += 1
+                    write_state(command)
+                except (FileNotFoundError, json.JSONDecodeError):
+                    pass
             viewer.sync()
             time.sleep(0.002)  # Cap the loop near real-time pace and keep the Mac cool.
     print("Web-controls viewer closed.")
