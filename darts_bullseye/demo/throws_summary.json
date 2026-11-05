@@ -1,0 +1,21 @@
+{
+  "checkpoint": "/Users/saichaitu/Desktop/humaniod/darts_lab/runs/finetune_20261105_054309/best_physics",
+  "episodes": 1,
+  "seed_start": 7,
+  "kept": [
+    {
+      "seed": 7,
+      "outcome": "board",
+      "error_m": 0.001412130692112734,
+      "bullseye": true,
+      "_wide_mp4": "demo/throw_seed7_err0.1cm_wide.mp4",
+      "_bullseye_mp4": "demo/throw_seed7_err0.1cm_bullseye.mp4"
+    }
+  ],
+  "all_hits": [
+    {
+      "seed": 7,
+      "error_m": 0.001412130692112734
+    }
+  ]
+}

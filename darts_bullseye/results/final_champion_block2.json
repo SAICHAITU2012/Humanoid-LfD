@@ -1,0 +1,384 @@
+{
+  "checkpoint": "/Users/saichaitu/Desktop/humaniod/darts_lab/runs/finetune_20261105_054309/best_physics",
+  "config": {
+    "variant": "arc_v7",
+    "episodes": 40,
+    "seed_start": 93001,
+    "randomize": true
+  },
+  "summary": {
+    "episodes": 40,
+    "clean_flight_rate": 0.825,
+    "board_hits": 28,
+    "bullseyes_inner": 0,
+    "bullseyes_outer": 4,
+    "within_2cm": 6,
+    "within_5cm": 17,
+    "within_10cm": 24,
+    "median_error_m": 0.0495,
+    "mean_error_m": 0.1149,
+    "min_error_m": 0.0129
+  },
+  "episodes": [
+    {
+      "seed": 93001,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0229,
+      "mass_scale": 0.951148513739415
+    },
+    {
+      "seed": 93002,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.042,
+      "mass_scale": 0.9564585173916497
+    },
+    {
+      "seed": 93003,
+      "outcome": "environment_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.226,
+      "mass_scale": 1.0161617526195248
+    },
+    {
+      "seed": 93004,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0156,
+      "mass_scale": 1.0181177771386802
+    },
+    {
+      "seed": 93005,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0495,
+      "mass_scale": 0.9756595800551369
+    },
+    {
+      "seed": 93006,
+      "outcome": "environment_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 1.1496,
+      "mass_scale": 1.0269580747912228
+    },
+    {
+      "seed": 93007,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0364,
+      "mass_scale": 1.0262738611166453
+    },
+    {
+      "seed": 93008,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 1.045424847408725
+    },
+    {
+      "seed": 93009,
+      "outcome": "environment_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.2548,
+      "mass_scale": 0.9518125639380665
+    },
+    {
+      "seed": 93010,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0248,
+      "mass_scale": 0.9742514485441
+    },
+    {
+      "seed": 93011,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0472,
+      "mass_scale": 0.9543858792936144
+    },
+    {
+      "seed": 93012,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0559,
+      "mass_scale": 1.0186160059052642
+    },
+    {
+      "seed": 93013,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 0.9710291556504137
+    },
+    {
+      "seed": 93014,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 0.9797077824498387
+    },
+    {
+      "seed": 93015,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 0.9909832633308595
+    },
+    {
+      "seed": 93016,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 1.0063489986770668
+    },
+    {
+      "seed": 93017,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 1.013320287668533
+    },
+    {
+      "seed": 93018,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0235,
+      "mass_scale": 1.012875118039401
+    },
+    {
+      "seed": 93019,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0587,
+      "mass_scale": 1.0173592644850316
+    },
+    {
+      "seed": 93020,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0391,
+      "mass_scale": 1.0249593106311052
+    },
+    {
+      "seed": 93021,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0199,
+      "mass_scale": 0.9595471742396973
+    },
+    {
+      "seed": 93022,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0226,
+      "mass_scale": 1.015523044614224
+    },
+    {
+      "seed": 93023,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0406,
+      "mass_scale": 1.0030253595792484
+    },
+    {
+      "seed": 93024,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.1603,
+      "mass_scale": 0.9595705249522339
+    },
+    {
+      "seed": 93025,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0157,
+      "mass_scale": 1.0384386476440999
+    },
+    {
+      "seed": 93026,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.1221,
+      "mass_scale": 0.9616389404864111
+    },
+    {
+      "seed": 93027,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0563,
+      "mass_scale": 0.971586067892472
+    },
+    {
+      "seed": 93028,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0264,
+      "mass_scale": 1.0196885061066565
+    },
+    {
+      "seed": 93029,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0547,
+      "mass_scale": 0.9901621160496858
+    },
+    {
+      "seed": 93030,
+      "outcome": "environment_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.2461,
+      "mass_scale": 1.0300015436462198
+    },
+    {
+      "seed": 93031,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0794,
+      "mass_scale": 0.9812544508230076
+    },
+    {
+      "seed": 93032,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0183,
+      "mass_scale": 1.0381324870774298
+    },
+    {
+      "seed": 93033,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.1732,
+      "mass_scale": 0.9515768310589122
+    },
+    {
+      "seed": 93034,
+      "outcome": "robot_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": false,
+      "error_m": null,
+      "mass_scale": 1.0252366490418925
+    },
+    {
+      "seed": 93035,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0147,
+      "mass_scale": 0.9853524022949685
+    },
+    {
+      "seed": 93036,
+      "outcome": "environment_hit",
+      "board": false,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.3954,
+      "mass_scale": 0.9936007350796662
+    },
+    {
+      "seed": 93037,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0129,
+      "mass_scale": 1.045061894358373
+    },
+    {
+      "seed": 93038,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0787,
+      "mass_scale": 0.9777232537089964
+    },
+    {
+      "seed": 93039,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.1221,
+      "mass_scale": 0.9973763362565592
+    },
+    {
+      "seed": 93040,
+      "outcome": "board",
+      "board": true,
+      "bullseye": false,
+      "clean": true,
+      "error_m": 0.0849,
+      "mass_scale": 0.9588205762835548
+    }
+  ]
+}

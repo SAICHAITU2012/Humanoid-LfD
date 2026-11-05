@@ -1,0 +1,10 @@
+{
+  "elbow_back": -0.2305704723652246,
+  "shoulder_finish": 0.3681199519120309,
+  "rate_scale": 1.2628074197364196,
+  "roll_finish": 0.42710727084230415,
+  "elbow_finish": 0.3875265635157611,
+  "aim_yaw": -0.17566681602015288,
+  "flight_autopilot": true,
+  "target_reward_weight": 1.0
+}

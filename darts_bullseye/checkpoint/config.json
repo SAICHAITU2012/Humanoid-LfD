@@ -1,0 +1,33 @@
+{
+  "variant": "arc_v7",
+  "throw_profile": {
+    "elbow_back": -0.2305704723652246,
+    "shoulder_finish": 0.3756199519120309,
+    "rate_scale": 1.2928074197364197,
+    "roll_finish": 0.49710727084230416,
+    "elbow_finish": 0.42752656351576107,
+    "aim_yaw": -0.17566681602015288,
+    "flight_autopilot": true,
+    "target_reward_weight": 1.0
+  },
+  "source_checkpoint": "/Users/saichaitu/Desktop/humaniod/darts_lab/runs/finetune_20261105_045253",
+  "additional_steps": 15000,
+  "workers": 3,
+  "rollout": 128,
+  "seed": 20261105,
+  "randomize": true,
+  "learning_rate": 0.0001,
+  "entropy": 0.001,
+  "exploration_std": 0.15,
+  "clip_range": 0.2,
+  "checkpoint_every": 1024,
+  "eval_every": 4096,
+  "eval_episodes": 8,
+  "eval_seed": 91001,
+  "bullseye_bonus": {
+    "board": 24.0,
+    "board_width": 0.004,
+    "cross": 6.0,
+    "cross_width": 0.01
+  }
+}
